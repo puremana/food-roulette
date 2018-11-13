@@ -7,6 +7,7 @@
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
+import axios from 'axios';
 
 export default {
   name: 'app',
@@ -22,6 +23,10 @@ export default {
   created() {
     this.getGeoLocation();
   },
+  mounted() {
+    axios.defaults.headers["Authorization"] = "Bearer " + "nice try";
+    this.getLocaleBusinesses();
+  },
   methods: {
     getGeoLocation() {
       let self = this;
@@ -32,6 +37,17 @@ export default {
           self.lng = position.coords.longitude;
         }
       }
+    },
+    getLocaleBusinesses() {
+      axios.get('https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search?location=Matamata')
+      .then(function (response) {
+        // handle success
+        console.log(response);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
     }
   }
 }
