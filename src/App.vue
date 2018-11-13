@@ -12,6 +12,27 @@ export default {
   name: 'app',
   components: {
     HelloWorld
+  },
+  data: function () {
+    return {
+      lat: null,
+      lng: null
+    }
+  },
+  created() {
+    this.getGeoLocation();
+  },
+  methods: {
+    getGeoLocation() {
+      let self = this;
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+        function showPosition(position) {
+          self.lat = position.coords.latitude;
+          self.lng = position.coords.longitude;
+        }
+      }
+    }
   }
 }
 </script>
