@@ -1,11 +1,18 @@
 <template>
   <div id="app">
     <div class="container">
-      
-      <div class="mystery-box" ref="mystery">
-        <span v-if="name !== ''" class="name">
+     
+      <div class="mystery-box" ref="mystery" @click="refer" :class="{'hover': name !== ''}">
+        <div v-if="name !== ''" class="name">
           {{name}}
-        </span>
+        </div>
+
+        <div v-if="rating !== -1" class="rating-box">
+            <span class="rating">
+            {{rating}}
+           </span>
+           <img class="star" src="./assets/star.svg">
+        </div>
       </div>
 
       <div class="button" @click="roulette()">
@@ -54,6 +61,8 @@ export default {
       error: "",
       loading: false,
       name: "",
+      link: "",
+      rating: -1
     }
   },
   created() {
@@ -62,7 +71,16 @@ export default {
   mounted() {
   },
   methods: {
+    refer() {
+      if (this.link !== "") {
+        window.open(this.link);
+      }
+    },
     roulette() {
+      if (this.loading) {
+        return;
+      }
+
       if ((this.lat !== null) && (this.lng !== null)) {
         this.loading = true;
         this.getLocaleBusinesses();
@@ -89,6 +107,7 @@ export default {
         // handle success
         self.error = "";
         self.filterBusinesses(response.data);
+        console.log(response.data);
       })
       .catch(function (error) {
         // handle error
@@ -99,6 +118,8 @@ export default {
       let ran = Math.floor(Math.random() * Math.floor(data.total - 1));
       let b = data.businesses[ran];
       this.name = b["name"];
+      this.link = b["url"];
+      this.rating = b["rating"].toFixed(1);
       this.$refs.mystery.style.backgroundImage = 'url(' + b["image_url"] + ')';
       this.loading = false;
     }
@@ -158,22 +179,54 @@ body {
   margin-top: 80px;
   text-align: center;
   
+  .star {
+    width: 70px;
+    text-shadow: 0px 0px 50px black;
+    display: inline;
+    vertical-align: middle;
+  }
+
+  .rating {
+    font-size: 40px;
+    color: white;
+    display: inline;
+    align-self: center;
+    line-height: 70px;
+    vertical-align: middle;
+    text-shadow: 1px 1px 10px black;
+  }
+
+  .rating-box {
+    bottom: 0px;
+    right: 0px;
+    grid-template-columns: 1fr 1fr;
+    align-self: end;
+    justify-self: end;
+    align-items: center;
+    justify-items: center;
+    padding-right: 10px;
+    padding-bottom: 10px;
+  }
+
   .mystery-box {
     height: 400px;
     width: 400px;
     margin: 0 auto 0 auto;
-    border-radius: 5px;
     box-shadow: 0px 0px 20px black;
     background: #f9f9f9;
     background-size: cover;
     display: grid;
     .name {
-      align-self: center;
+      align-self: start;
       justify-self: center;
       font-size: 40px;
       text-shadow: 1px 1px 10px black;
       color: white;
       width: 400px;
+      grid-row-start: 1;
+      grid-row-end: 3;
+      background-color: #0000009c;
+      padding: 10px 0 10px 0;
     }
   }
 
@@ -182,7 +235,6 @@ body {
     height: 22px;
     margin: 50px auto 10px auto;
     padding: 20px 40px 20px 40px;
-    border-radius: 5px;
     font-weight: 700;
     box-shadow: 0px 0px 20px black;
     color: white;
@@ -191,6 +243,9 @@ body {
   }
   .error {
 
+  }
+  .hover {
+    cursor: pointer;
   }
 }
 
