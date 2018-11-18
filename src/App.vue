@@ -68,8 +68,6 @@ export default {
   created() {
     this.getGeoLocation();
   },
-  mounted() {
-  },
   methods: {
     refer() {
       if (this.link !== "") {
@@ -102,7 +100,7 @@ export default {
     },
     getLocaleBusinesses() {
       let self = this;
-      axios.get('https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search?latitude=' + this.lat + '&longitude=' + this.lng)
+      axios.get('https://us-central1-food-roulette-3dd83.cloudfunctions.net/yelpBusinessSearch?lat=' + this.lat + '&lng=-' + this.lng)
       .then(function (response) {
         // handle success
         self.error = "";
