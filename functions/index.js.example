@@ -1,0 +1,14 @@
+const functions = require('firebase-functions');
+const yelp = require('yelp-fusion');
+ const client = yelp.client("API Key here!");
+
+exports.yelpBusinessSearch = functions.https.onRequest((req, res) => {
+    client.search({
+        latitude: req.query.lat,
+        longitude: req.query.lng
+      }).then(response => {
+        res.send(response.jsonBody.businesses);
+      }).catch(e => {
+        res.send(e);
+      });
+});
