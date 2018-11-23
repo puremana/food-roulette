@@ -1,7 +1,38 @@
 <template>
   <div id="app">
+    <h1>Random Food Picker!</h1>
+    <div class="left-container">
+      <h2>Options</h2>
+      <h3>Price</h3>
+      <select v-model="price">
+        <option value="0">No Price Filter</option>
+        <option value="1">$</option>
+        <option value="2">$$</option>
+        <option value="3">$$$</option>
+        <option value="4">$$$$</option>
+      </select>
+
+      <h3>Radius</h3>
+      <select v-model="radius">
+        <option value="1000">1km</option>
+        <option value="2500">2.5km</option>
+        <option value="5000">5km</option>
+        <option value="10000">10km</option>
+        <option value="25000">25km</option>
+      </select>
+
+      <h3>Location Address</h3>
+      <input type="text" v-model="location">
+
+      <div class="button" @click="roulette()">
+        <div v-if="loading" class="loader">Loading...</div>
+        <span v-else>
+          Food Roulette!
+        </span>
+      </div>
+    </div>
+
     <div class="container">
-     
       <div class="mystery-box" ref="mystery" @click="refer" :class="{'hover': name !== ''}">
         <div v-if="name !== ''" class="name">
           {{name}}
@@ -13,17 +44,6 @@
            </span>
            <img class="star" src="./assets/star.svg">
         </div>
-      </div>
-
-      <div class="button" @click="roulette()">
-      <div v-if="loading" class="loader">Loading...</div>
-        <span v-else>
-          Food Roulette!
-        </span>
-      </div>
-
-      <div v-if="error !== ''" class="error">
-        {{error}}
       </div>
 <!--
       <div class="inline-buttons">
@@ -42,18 +62,19 @@
         </select>
       </div>-->
     </div>
+
+    <div v-if="error !== ''" class="error">
+      {{error}}
+    </div>
+
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 import axios from 'axios';
 
 export default {
   name: 'app',
-  components: {
-    HelloWorld
-  },
   data: function () {
     return {
       lat: null,
@@ -62,7 +83,10 @@ export default {
       loading: false,
       name: "",
       link: "",
-      rating: -1
+      rating: -1,
+      price: 0,
+      radius: 2500,
+      location: ""
     }
   },
   created() {
@@ -109,7 +133,8 @@ export default {
       })
       .catch(function (error) {
         // handle error
-        self.error = "error";
+        // self.error = "error";
+        self.error = error;
       });
     },
     filterBusinesses(data) {
@@ -129,54 +154,63 @@ export default {
 @import url('https://fonts.googleapis.com/css?family=Noto+Sans:400,700');
 
 body {
-  background: linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
-	background-size: 400% 400%;
-	-webkit-animation: Gradient 15s ease infinite;
-	-moz-animation: Gradient 15s ease infinite;
-	animation: Gradient 15s ease infinite;
+  font-family: 'Noto Sans', sans-serif;
+  text-align: center;
+  h1 {
+    margin-bottom: 30px;
+  }
 }
 
-@-webkit-keyframes Gradient {
-	0% {
-		background-position: 0% 50%
-	}
-	50% {
-		background-position: 100% 50%
-	}
-	100% {
-		background-position: 0% 50%
-	}
-}
+.left-container {
+  box-shadow: 0px 0px 20px black;
+  display: inline-block;
+  vertical-align: top;
+  max-width: 500px;
+  width: 50%;
+  min-width: 300px;
+  margin-bottom: 20px;
+  text-align: center;
+  min-height: 400px;
+  position: relative;
 
-@-moz-keyframes Gradient {
-	0% {
-		background-position: 0% 50%
-	}
-	50% {
-		background-position: 100% 50%
-	}
-	100% {
-		background-position: 0% 50%
-	}
-}
-
-@keyframes Gradient {
-	0% {
-		background-position: 0% 50%
-	}
-	50% {
-		background-position: 100% 50%
-	}
-	100% {
-		background-position: 0% 50%
-	}
+  h2 {
+    margin: 20px 0 0 0;
+  }
+  select, input {
+    padding: 10px;
+    margin-bottom: 5px;
+  }
+  select {
+    width: 90%;
+  }
+  input {
+    width: calc(90% - 20px);
+  }
+  h3 {
+    text-align: left;
+    margin: 0 0 5px 5%;
+    font-weight: 400;
+  }
+  .button {
+    width: 90%;
+    height: 22px;
+    position: absolute;
+    bottom: -10px;
+    margin: 0 auto 0 auto;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 0 20px 0;
+    font-weight: 700;
+    color: white;
+    background-color: #00000055;
+    cursor: pointer;
+  }
+  margin-right: 2.5%;
 }
 
 .container {
-  font-family: 'Noto Sans', sans-serif;
-  margin-top: 80px;
-  text-align: center;
-  
+  vertical-align: top;
+  display: inline-block;
   .star {
     width: 70px;
     text-shadow: 0px 0px 50px black;
@@ -227,24 +261,14 @@ body {
       padding: 10px 0 10px 0;
     }
   }
-
-  .button {
-    width: 320px;
-    height: 22px;
-    margin: 50px auto 10px auto;
-    padding: 20px 40px 20px 40px;
-    font-weight: 700;
-    box-shadow: 0px 0px 20px black;
-    color: white;
-    background-color: #00000055;
-    cursor: pointer;
-  }
   .error {
 
   }
-  .hover {
-    cursor: pointer;
-  }
+
+}
+
+.hover {
+  cursor: pointer;
 }
 
 
