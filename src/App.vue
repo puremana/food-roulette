@@ -32,17 +32,17 @@
       </div>
       
       <h3>Location Address <span class="required">*</span></h3>
-      <input type="text" v-model="location">
+      <input type="text" v-model="location" :disabled="geolocation" placeholder="Get food around this address!">
       <div class="switch-container">
         <label class="switch">
-          <input type="checkbox">
+          <input ref="geoInput" @click="geolocationCheck" type="checkbox" v-model="geolocation">
           <span class="slider round"></span>
         </label>
         <span>Geolocation</span>
       </div>
       
 
-      <div class="button" @click="roulette()">
+      <div class="button" @click="roulette()" :class="{'button-active': valid}">
         <div v-if="loading" class="loader">Loading...</div>
         <span v-else>
           Food Roulette!
@@ -50,7 +50,7 @@
       </div>
     </div>
 
-    <div class="container">
+    <div v-show="name" class="container mystery-box" @click="refer" :class="{'hover': name !== ''}">
       <div class="mystery-box" ref="mystery" @click="refer" :class="{'hover': name !== ''}">
         <div v-if="name !== ''" class="name">
           {{name}}
@@ -88,11 +88,25 @@ export default {
       rating: -1,
       price: 0,
       radius: 2500,
-      location: ""
+      location: "",
+      geolocation: false
+    }
+  },
+  computed: {
+    valid() {
+      if (this.location !== "" || (this.lat !== null && this.geolocation)) {
+         return true;
+      }
+      return false;
     }
   },
   created() {
     this.getGeoLocation();
+  },
+  mounted() {
+    if (this.lat !== null) {
+      this.geolocation = true;
+    }
   },
   methods: {
     refer() {
@@ -114,6 +128,18 @@ export default {
       }
       
     },
+    geolocationCheck() {
+      if (this.geolocation === true) {
+        this.geolocation = false;
+        return;
+      }
+      if (this.lat !== null) {
+        this.geolocation = true;
+      }
+      else {
+        this.getGeoLocation();
+      }
+    },
     getGeoLocation() {
       let self = this;
       if (navigator.geolocation) {
@@ -121,17 +147,17 @@ export default {
         function showPosition(position) {
           self.lat = position.coords.latitude;
           self.lng = position.coords.longitude;
+          self.geolocation = true;
         }
       }
     },
     getLocaleBusinesses() {
       let self = this;
-      axios.get('https://us-central1-food-roulette-3dd83.cloudfunctions.net/yelpBusinessSearch?lat=' + this.lat + '&lng=-' + this.lng)
+      axios.get('https://us-central1-food-roulette-3dd83.cloudfunctions.net/yelpBusinessSearch?lat=' + this.lat + '&lng=' + this.lng + '&radius=' + this.radius + '&price=' + this.price + '&location=' + this.location + '&geo=' + this.geolocation)
       .then(function (response) {
         // handle success
         self.error = "";
         self.filterBusinesses(response.data);
-        console.log(response.data);
       })
       .catch(function (error) {
         // handle error
@@ -140,12 +166,19 @@ export default {
       });
     },
     filterBusinesses(data) {
-      let ran = Math.floor(Math.random() * Math.floor(data.total - 1));
-      let b = data.businesses[ran];
+      let ran = Math.floor(Math.random() * Math.floor(data.length - 1));
+      console.log(data);
+      console.log(data[ran]);
+      
+      let b = data[ran];
+      console.log("what " + b["image_url"]);
       this.name = b["name"];
       this.link = b["url"];
       this.rating = b["rating"].toFixed(1);
-      this.$refs.mystery.style.backgroundImage = 'url(' + b["image_url"] + ')';
+      this.$refs.mystery.style.backgroundImage = "url('" + b["image_url"] + "')";
+      // document.getElementById('mystery').style.backgroundImage = "url('https://s3-media4.fl.yelpcdn.com/bphoto/J776szt_Gp4osREj4oONXA/o.jpg')";
+      console.log(this.$refs.mystery);
+      // this.$refs.mystery.style.backgroundImage = "url('https://s3-media4.fl.yelpcdn.com/bphoto/J776szt_Gp4osREj4oONXA/o.jpg')";
       this.loading = false;
     }
   }
@@ -223,21 +256,17 @@ body {
     font-weight: 700;
     color: white;
     background-color: #aaaaaa;
+  }
+  .button-active {
     cursor: pointer;
+    background-color: #2196F3;
   }
 }
 
 .container {
       // margin: 0 auto 0 auto;
       margin: 0 1% 0 1%;
-    box-shadow: 0px 0px 20px black;
-      max-height: 475px;
-      height: 90vw;
-    // width: 400px;
-    width: 90vw;
-    max-width: 475px;
-    min-width: 300px;
-    min-height: 300px;
+    
   vertical-align: top;
   display: inline-block;
   .star {
@@ -270,6 +299,14 @@ body {
   }
 
   .mystery-box {
+    box-shadow: 0px 0px 20px black;
+      max-height: 475px;
+      height: 90vw;
+    // width: 400px;
+    width: 90vw;
+    max-width: 475px;
+    min-width: 300px;
+    min-height: 300px;
     background: #f9f9f9;
     background-size: cover;
     display: grid;
@@ -279,7 +316,7 @@ body {
       font-size: 40px;
       text-shadow: 1px 1px 10px black;
       color: white;
-      width: 400px;
+      width: 100%;
       grid-row-start: 1;
       grid-row-end: 3;
       background-color: #0000009c;
