@@ -21,8 +21,26 @@
         <option value="25000">25km</option>
       </select>
 
-      <h3>Location Address</h3>
+      <h3>Delivery Options</h3>
+      <div class="checkbox-container">
+        <div class="checkbox">
+          <input class="checkbox-input" type="checkbox" name="vehicle1" value="Bike">Delivery
+        </div>
+        <div class="checkbox">
+          <input class="checkbox-input" type="checkbox" name="vehicle1" value="Bike">Pickup
+        </div>
+      </div>
+      
+      <h3>Location Address <span class="required">*</span></h3>
       <input type="text" v-model="location">
+      <div class="switch-container">
+        <label class="switch">
+          <input type="checkbox">
+          <span class="slider round"></span>
+        </label>
+        <span>Geolocation</span>
+      </div>
+      
 
       <div class="button" @click="roulette()">
         <div v-if="loading" class="loader">Loading...</div>
@@ -45,22 +63,6 @@
            <img class="star" src="./assets/star.svg">
         </div>
       </div>
-<!--
-      <div class="inline-buttons">
-        <select>
-          <option value="volvo">Volvo</option>
-          <option value="saab">Saab</option>
-          <option value="mercedes">Mercedes</option>
-          <option value="audi">Audi</option>
-        </select>
-
-        <select>
-          <option value="volvo">Volvo</option>
-          <option value="saab">Saab</option>
-          <option value="mercedes">Mercedes</option>
-          <option value="audi">Audi</option>
-        </select>
-      </div>-->
     </div>
 
     <div v-if="error !== ''" class="error">
@@ -165,12 +167,14 @@ body {
   box-shadow: 0px 0px 20px black;
   display: inline-block;
   vertical-align: top;
-  max-width: 500px;
-  width: 50%;
+  max-width: 475px;
+  width: 90vw;
   min-width: 300px;
+  
+  margin: 0 1% 0 1%;
   margin-bottom: 20px;
   text-align: center;
-  min-height: 400px;
+  min-height: 475px;
   position: relative;
 
   h2 {
@@ -179,6 +183,7 @@ body {
   select, input {
     padding: 10px;
     margin-bottom: 5px;
+    font-family: 'Noto Sans', sans-serif;
   }
   select {
     width: 90%;
@@ -186,10 +191,25 @@ body {
   input {
     width: calc(90% - 20px);
   }
+  .checkbox-input {
+    width: 40px;
+  }
+  .checkbox {
+    width: 120px;
+    display: inline-block;
+  }
+  .checkbox-container {
+    text-align: left;
+    margin-left: 5%;
+    margin-bottom: 5px;
+  }
   h3 {
     text-align: left;
     margin: 0 0 5px 5%;
     font-weight: 400;
+  }
+  .required {
+    color: #df0909;
   }
   .button {
     width: 90%;
@@ -202,13 +222,22 @@ body {
     padding: 20px 0 20px 0;
     font-weight: 700;
     color: white;
-    background-color: #00000055;
+    background-color: #aaaaaa;
     cursor: pointer;
   }
-  margin-right: 2.5%;
 }
 
 .container {
+      // margin: 0 auto 0 auto;
+      margin: 0 1% 0 1%;
+    box-shadow: 0px 0px 20px black;
+      max-height: 475px;
+      height: 90vw;
+    // width: 400px;
+    width: 90vw;
+    max-width: 475px;
+    min-width: 300px;
+    min-height: 300px;
   vertical-align: top;
   display: inline-block;
   .star {
@@ -241,10 +270,6 @@ body {
   }
 
   .mystery-box {
-    height: 400px;
-    width: 400px;
-    margin: 0 auto 0 auto;
-    box-shadow: 0px 0px 20px black;
     background: #f9f9f9;
     background-size: cover;
     display: grid;
@@ -357,4 +382,71 @@ width: 1em;
   }
 }
 
+.switch-container {
+  text-align: left;
+    span {
+    color: grey;
+  }
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  margin-left: 5%;
+  margin-right: 10px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 4px;
+  bottom: 3px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(14px);
+  -ms-transform: translateX(14px);
+  transform: translateX(14px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 20px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
 </style>
