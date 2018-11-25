@@ -59,6 +59,10 @@
           {{name}}
         </div>
 
+        <div v-if="noImage" class="no-image">
+          No Image Found
+        </div>
+
         <div v-if="rating !== -1" class="rating-box">
             <span class="rating">
             {{rating}}
@@ -92,7 +96,8 @@ export default {
       price: 0,
       radius: 2500,
       location: "",
-      geolocation: false
+      geolocation: false,
+      noImage: false
     }
   },
   computed: {
@@ -178,10 +183,12 @@ export default {
       this.name = b["name"];
       this.link = b["url"];
       this.rating = b["rating"].toFixed(1);
+      this.noImage = false;
+      if (b["image_url"] === "") {
+        this.noImage = true;
+      }
       this.$refs.mystery.style.backgroundImage = "url('" + b["image_url"] + "')";
-      // document.getElementById('mystery').style.backgroundImage = "url('https://s3-media4.fl.yelpcdn.com/bphoto/J776szt_Gp4osREj4oONXA/o.jpg')";
       console.log(this.$refs.mystery);
-      // this.$refs.mystery.style.backgroundImage = "url('https://s3-media4.fl.yelpcdn.com/bphoto/J776szt_Gp4osREj4oONXA/o.jpg')";
       this.loading = false;
     }
   }
@@ -275,9 +282,7 @@ body {
 }
 
 .container {
-      // margin: 0 auto 0 auto;
-      margin: 0 1% 0 1%;
-    
+  margin: 0 1% 0 1%;
   vertical-align: top;
   display: inline-block;
   .star {
@@ -285,6 +290,11 @@ body {
     text-shadow: 0px 0px 50px black;
     display: inline;
     vertical-align: middle;
+  }
+
+  .no-image {
+    font-size: 35px;
+    color: #878484;
   }
 
   .rating {
