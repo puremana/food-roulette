@@ -38,7 +38,7 @@
       <input type="text" v-model="location" :disabled="geolocation" placeholder="Get food around this address!">
       <div class="switch-container">
         <label class="switch">
-          <input ref="geoInput" @click="geolocationCheck" type="checkbox" v-model="geolocation">
+          <input ref="geoInput" @click="geolocationCheck($event)" type="checkbox" v-model="geolocation">
           <span class="slider round"></span>
         </label>
         <span>Geolocation</span>
@@ -184,7 +184,8 @@ export default {
         this.error = "Please enable geolocation to use the roulette";
       }
     },
-    geolocationCheck() {
+    geolocationCheck(event) {
+      if (event) event.preventDefault()
       if (this.geolocation === true) {
         this.geolocation = false;
         return;
