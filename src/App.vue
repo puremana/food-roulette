@@ -27,10 +27,10 @@
       <h3>Delivery Options</h3>
       <div class="checkbox-container">
         <div class="checkbox">
-          <input class="checkbox-input" type="checkbox" name="vehicle1" value="Bike">Delivery
+          <input class="checkbox-input" type="checkbox" v-model="delivery">Delivery
         </div>
         <div class="checkbox">
-          <input class="checkbox-input" type="checkbox" name="vehicle1" value="Bike">Pickup
+          <input class="checkbox-input" type="checkbox" v-model="pickup">Pickup
         </div>
       </div>
       
@@ -61,6 +61,10 @@
 
         <div v-if="noImage" class="no-image">
           No Image Found
+        </div>
+
+        <div v-if="phonenumber" class="phone-number">
+          {{phonenumber}}
         </div>
 
         <div v-if="rating !== -1" class="rating-box">
@@ -104,7 +108,10 @@ export default {
       geolocation: false,
       noImage: false,
       x: null,
-      y: null
+      y: null,
+      delivery: false,
+      pickup: false,
+      phonenumber: null
     }
   },
   computed: {
@@ -219,7 +226,7 @@ export default {
 
       let marker = L.marker([this.x, this.y]).addTo(mymap);
 
-      if (this.geo) {
+      if (this.geolocation) {
         let circle = L.circle([this.lat, this.lng], {
             color: '#00d667',
             fillColor: '#00d667',
@@ -240,12 +247,18 @@ export default {
         // handle success
         self.error = "";
         if (response.data.length === 0) {
-          self.error = "No results were found, try increasing your radius!";
+          self.error = "No open businesses were found matching your options, try increasing your radius!";
         } else if (response.data.statusCode === 400) {
           self.error = "Location not found, try specifying a more exact location!";
         }
         else {
-          self.filterBusinesses(response.data);
+          let realData = self.filterData(response.data);
+          if (realData.length === 0) {
+            self.error = "No open businesses were found matching your options, try increasing your radius!";
+          }
+          else {
+            self.filterBusinesses(realData);
+          }
         }
         self.loading = false;
       })
@@ -254,6 +267,26 @@ export default {
         // self.error = "error";
         self.error = "Error: " + error;
       });
+    },
+    filterData(data) {
+      let newData = [];
+      for (let d in data) {
+        if (data[d]["is_closed"]) {
+          continue;
+        }
+        if (this.delivery) {
+          if (!data[d].transactions.includes("delivery")) {
+            continue;
+          }
+        }
+        if (this.pickup) {
+          if (!data[d].transactions.includes("pickup")) {
+            continue;
+          }
+        }
+        newData.push(data[d]);
+      }
+      return newData;
     },
     filterBusinesses(data) {
       let ran = Math.floor(Math.random() * Math.floor(data.length - 1));
@@ -266,6 +299,7 @@ export default {
       if (b["image_url"] === "") {
         this.noImage = true;
       }
+      this.phonenumber = b["display_phone"];
       this.$refs.mystery.style.backgroundImage = "url('" + b["image_url"] + "')";
       console.log(this.$refs.mystery);
       this.distance = Math.round(b["distance"]);
@@ -298,10 +332,11 @@ body {
 
 .error {
   box-shadow: 0px 0px 20px black;
-  background: white;
+  border: 2px solid red;
+  background: #ffcaca;
   padding: 20px 10px;
   max-width: 455px;
-  margin: 20px auto 20px auto;
+  margin: 0 auto 20px auto;
 }
 
 #mapid {
@@ -379,7 +414,8 @@ body {
 }
 
 .container {
-  margin: 0 1% 0 1%;
+  margin: 0 1% 20px 1%;
+  position: relative;
   vertical-align: top;
   display: inline-block;
   .star {
@@ -416,6 +452,17 @@ body {
     padding-bottom: 10px;
   }
 
+  .phone-number {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding-left: 10px;
+    padding-bottom: 20px;
+    font-size: 30px;
+    text-shadow: 1px 1px 10px black;
+    color: white;
+  }
+
   .mystery-box {
     box-shadow: 0px 0px 20px black;
       max-height: 475px;
@@ -441,10 +488,6 @@ body {
       padding: 10px 0 10px 0;
     }
   }
-  .error {
-
-  }
-
 }
 
 .hover {
