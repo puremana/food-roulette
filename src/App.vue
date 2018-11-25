@@ -76,6 +76,11 @@
       {{error}}
     </div>
 
+    <div ref="map"></div>
+    <div v-if="name">
+      Distance From You: {{distance}}m
+    </div>
+
   </div>
 </template>
 
@@ -97,7 +102,9 @@ export default {
       radius: 2500,
       location: "",
       geolocation: false,
-      noImage: false
+      noImage: false,
+      x: null,
+      y: null
     }
   },
   computed: {
@@ -106,6 +113,40 @@ export default {
          return true;
       }
       return false;
+    },
+    zoom() {
+      switch(this.radius) {
+        case 1000:
+          return 15;
+          break;
+        case 2500:
+          return 14;
+          break;
+        case 5000:
+          return 14;
+          break;
+        case 10000:
+          return 13;
+          break;
+        default:
+          return 12;
+      }
+    },
+    rlat() {
+      if (this.geo) {
+        if (this.lat) {
+          return this.lat;
+        }
+      }
+      return this.x;
+    },
+    rlng() {
+      if (this.geo) {
+        if (this.lng) {
+          return this.lng;
+        }
+      }
+      return this.y;
     }
   },
   created() {
@@ -115,6 +156,7 @@ export default {
     if (this.lat !== null) {
       this.geolocation = true;
     }
+    
   },
   methods: {
     refer() {
@@ -134,7 +176,6 @@ export default {
       else {
         this.error = "Please enable geolocation to use the roulette";
       }
-      
     },
     geolocationCheck() {
       if (this.geolocation === true) {
@@ -157,6 +198,39 @@ export default {
           self.lng = position.coords.longitude;
           self.geolocation = true;
         }
+      }
+    },
+    createMapsLocation() {
+      if (document.getElementById("mapid")) {
+        let element = document.getElementById("mapid");
+        element.parentNode.removeChild(element);
+      }
+      let m = document.createElement("div");
+      m.setAttribute("id", "mapid");
+      this.$refs.map.appendChild(m);
+
+      let mymap = L.map('mapid').setView([this.rlat, this.rlng], this.zoom);
+      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoicHVyZW1hbmEiLCJhIjoiY2pvd2N1eWw5MDlpYjNwbXRocjN3bTJmayJ9.Wi_6gEx-kcS2uq1_OU_Jew', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 30,
+        id: 'mapbox.streets',
+        accessToken: 'pk.eyJ1IjoicHVyZW1hbmEiLCJhIjoiY2pvd2N1eWw5MDlpYjNwbXRocjN3bTJmayJ9.Wi_6gEx-kcS2uq1_OU_Jew'
+      }).addTo(mymap);
+
+      let marker = L.marker([this.x, this.y]).addTo(mymap);
+
+      if (this.geo) {
+        let circle = L.circle([this.lat, this.lng], {
+            color: '#00d667',
+            fillColor: '#00d667',
+            fillOpacity: 0.1,
+            radius: this.radius
+        }).addTo(mymap);
+
+          let popup = L.popup()
+        .setLatLng([this.lat, this.lng])
+        .setContent("You are here!")
+        .openOn(mymap);
       }
     },
     getLocaleBusinesses() {
@@ -184,7 +258,7 @@ export default {
     filterBusinesses(data) {
       let ran = Math.floor(Math.random() * Math.floor(data.length - 1));
       let b = data[ran];
-      console.log("what " + b["image_url"]);
+      console.log(b);
       this.name = b["name"];
       this.link = b["url"];
       this.rating = b["rating"].toFixed(1);
@@ -194,6 +268,10 @@ export default {
       }
       this.$refs.mystery.style.backgroundImage = "url('" + b["image_url"] + "')";
       console.log(this.$refs.mystery);
+      this.distance = Math.round(b["distance"]);
+      this.x = b["coordinates"]["latitude"];
+      this.y = b["coordinates"]["longitude"];
+      this.createMapsLocation();
     }
   }
 }
@@ -223,6 +301,13 @@ body {
   background: white;
   padding: 20px 10px;
   max-width: 455px;
+  margin: 20px auto 20px auto;
+}
+
+#mapid {
+  box-shadow: 0px 0px 20px black;
+  max-width: 980px;
+  height: 400px;
   margin: 0 auto 0 auto;
 }
 
