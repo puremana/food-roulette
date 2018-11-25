@@ -72,7 +72,7 @@
       </div>
     </div>
 
-    <div v-if="error !== ''" class="error">
+    <div v-if="error" class="error">
       {{error}}
     </div>
 
@@ -123,7 +123,7 @@ export default {
       }
     },
     roulette() {
-      if (this.loading) {
+      if (this.loading || !this.valid) {
         return;
       }
 
@@ -165,19 +165,24 @@ export default {
       .then(function (response) {
         // handle success
         self.error = "";
-        self.filterBusinesses(response.data);
+        if (response.data.length === 0) {
+          self.error = "No results were found, try increasing your radius!";
+        } else if (response.data.statusCode === 400) {
+          self.error = "Location not found, try specifying a more exact location!";
+        }
+        else {
+          self.filterBusinesses(response.data);
+        }
+        self.loading = false;
       })
       .catch(function (error) {
         // handle error
         // self.error = "error";
-        self.error = error;
+        self.error = "Error: " + error;
       });
     },
     filterBusinesses(data) {
       let ran = Math.floor(Math.random() * Math.floor(data.length - 1));
-      console.log(data);
-      console.log(data[ran]);
-      
       let b = data[ran];
       console.log("what " + b["image_url"]);
       this.name = b["name"];
@@ -189,7 +194,6 @@ export default {
       }
       this.$refs.mystery.style.backgroundImage = "url('" + b["image_url"] + "')";
       console.log(this.$refs.mystery);
-      this.loading = false;
     }
   }
 }
@@ -212,6 +216,14 @@ body {
       margin-bottom: -20px;
     }
   }
+}
+
+.error {
+  box-shadow: 0px 0px 20px black;
+  background: white;
+  padding: 20px 10px;
+  max-width: 455px;
+  margin: 0 auto 0 auto;
 }
 
 .left-container {
@@ -365,8 +377,8 @@ body {
   font-size: 20px;
   text-indent: -9999em;
   overflow: hidden;
-height: 1em;
-width: 1em;
+  height: 1em;
+  width: 1em;
   border-radius: 50%;
   position: absolute;
   -webkit-transform: translateZ(0);
