@@ -81,7 +81,7 @@
     </div>
 
     <div ref="map"></div>
-    <div v-if="name">
+    <div v-if="name" style="color: white;">
       Distance From You: {{distance}}m
     </div>
 
@@ -291,7 +291,6 @@ export default {
     filterBusinesses(data) {
       let ran = Math.floor(Math.random() * Math.floor(data.length - 1));
       let b = data[ran];
-      console.log(b);
       this.name = b["name"];
       this.link = b["url"];
       this.rating = b["rating"].toFixed(1);
@@ -301,7 +300,7 @@ export default {
       }
       this.phonenumber = b["display_phone"];
       this.$refs.mystery.style.backgroundImage = "url('" + b["image_url"] + "')";
-      console.log(this.$refs.mystery);
+
       this.distance = Math.round(b["distance"]);
       this.x = b["coordinates"]["latitude"];
       this.y = b["coordinates"]["longitude"];
@@ -317,7 +316,32 @@ export default {
 body {
   font-family: 'Noto Sans', sans-serif;
   text-align: center;
+
+  background: linear-gradient(128deg, #00b3ff, #006fff);
+  background-size: 400% 400%;
+
+  -webkit-animation: backgroundAnimation 10s ease infinite;
+  -moz-animation: backgroundAnimation 10s ease infinite;
+  animation: backgroundAnimation 10s ease infinite;
+
+  @-webkit-keyframes backgroundAnimation {
+      0%{background-position:0% 4%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 4%}
+  }
+  @-moz-keyframes backgroundAnimation {
+      0%{background-position:0% 4%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 4%}
+  }
+  @keyframes backgroundAnimation { 
+      0%{background-position:0% 4%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 4%}
+  }
+
   h1 {
+    color: white;
     margin-bottom: 30px;
   }
   .github-container {
@@ -347,6 +371,7 @@ body {
 }
 
 .left-container {
+  background: white;
   box-shadow: 0px 0px 20px black;
   display: inline-block;
   vertical-align: top;
