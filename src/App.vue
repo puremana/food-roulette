@@ -1,5 +1,8 @@
 <template>
   <div id="app">
+    <div class="github-container">
+      <iframe class="github-button" src="https://ghbtns.com/github-btn.html?user=puremana&repo=food-roulette&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+    </div>
     <h1>Random Food Picker!</h1>
     <div class="left-container">
       <h2>Options</h2>
@@ -193,6 +196,14 @@ body {
   text-align: center;
   h1 {
     margin-bottom: 30px;
+  }
+  .github-container {
+    position: relative;
+    .github-button {
+      position: absolute;
+      right: 0;
+      margin-bottom: -20px;
+    }
   }
 }
 
@@ -485,5 +496,14 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+@media only screen and (max-width: 680px) {
+  .github-button {
+    // position: relative !important;
+  }
+  h1 {
+    padding-top: 40px;
+  }
 }
 </style>
