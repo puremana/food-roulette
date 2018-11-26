@@ -80,7 +80,7 @@
       {{error}}
     </div>
 
-    <div ref="map"></div>
+    <div ref="map" class="map-container"></div>
     <div v-if="name" style="color: white;">
       Distance From You: {{distance}}m
     </div>
@@ -369,6 +369,10 @@ body {
   max-width: 980px;
   height: 400px;
   margin: 0 auto 0 auto;
+}
+
+.map-container {
+  margin: 0 3.5% 0 3.5%;
 }
 
 .left-container {
