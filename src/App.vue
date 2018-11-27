@@ -173,6 +173,9 @@ export default {
   },
   methods: {
     refer() {
+      if (typeof ga === 'function') {
+        ga('send', 'event', 'Yelp Image', 'Click', true);
+      }
       if (this.link !== "") {
         window.open(this.link);
       }
@@ -182,6 +185,14 @@ export default {
         return;
       }
 
+      if (typeof ga === 'function') {
+        ga('send', 'event', 'Roulette Button', 'Submit', true);
+        ga('send', 'event', 'Geo', 'Value', this.geo);
+        ga('send', 'event', 'Price', 'Value', this.price);
+        ga('send', 'event', 'Radius', 'Value', this.radius);
+        ga('send', 'event', 'Delivery/Pickup', 'Value', this.delivery + "," + this.pickup);
+      }
+      
       if ((this.lat !== null) && (this.lng !== null)) {
         this.loading = true;
         this.getLocaleBusinesses();
@@ -252,7 +263,6 @@ export default {
       axios.get('https://us-central1-food-roulette-3dd83.cloudfunctions.net/yelpBusinessSearch?lat=' + this.lat + '&lng=' + this.lng + '&radius=' + this.radius + '&price=' + this.price + '&location=' + this.location + '&geo=' + this.geolocation)
       .then(function (response) {
         // handle success
-        console.log(response);
         self.error = "";
         if (response.data.length === 0) {
           self.error = "No open businesses were found matching your options, try increasing your radius!";
@@ -390,7 +400,7 @@ body {
 }
 
 .map-container {
-  margin: 0 3.5% 0 3.5%;
+  margin: 0 3.5% 10px 3.5%;
 }
 
 .left-container {
