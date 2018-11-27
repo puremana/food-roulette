@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+  <img src="./assets/yelp-logo.png" class="yelp-logo" alt="Yelp Logo">
     <div class="github-container">
       <iframe class="github-button" src="https://ghbtns.com/github-btn.html?user=puremana&repo=food-roulette&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
     </div>
@@ -68,10 +69,8 @@
         </div>
 
         <div v-if="rating !== -1" class="rating-box">
-            <span class="rating">
-            {{rating}}
-           </span>
-           <img class="star" src="./assets/star.svg">
+           <img class="star" :src="ratingPicture">
+           <p class="review-text">Based on {{ reviews }} Reviews</p>
         </div>
       </div>
     </div>
@@ -111,7 +110,8 @@ export default {
       y: null,
       delivery: false,
       pickup: false,
-      phonenumber: null
+      phonenumber: null,
+      reviews: 0
     }
   },
   computed: {
@@ -154,6 +154,12 @@ export default {
         }
       }
       return this.y;
+    },
+    ratingPicture() {
+      if (this.rating === -1) {
+        return null;
+      }
+      return require("./assets/ratings/" + this.rating.replace(".", "-") + ".png");
     }
   },
   created() {
@@ -246,6 +252,7 @@ export default {
       axios.get('https://us-central1-food-roulette-3dd83.cloudfunctions.net/yelpBusinessSearch?lat=' + this.lat + '&lng=' + this.lng + '&radius=' + this.radius + '&price=' + this.price + '&location=' + this.location + '&geo=' + this.geolocation)
       .then(function (response) {
         // handle success
+        console.log(response);
         self.error = "";
         if (response.data.length === 0) {
           self.error = "No open businesses were found matching your options, try increasing your radius!";
@@ -295,6 +302,7 @@ export default {
       this.name = b["name"];
       this.link = b["url"];
       this.rating = b["rating"].toFixed(1);
+      this.reviews = b["review_count"];
       this.noImage = false;
       if (b["image_url"] === "") {
         this.noImage = true;
@@ -341,12 +349,22 @@ body {
       100%{background-position:0% 4%}
   }
 
+  .yelp-logo {
+    width: 100px;
+    display: inline;
+  }
+
   h1 {
     color: white;
     margin-bottom: 30px;
+    padding-top: 0;
+    margin-top: 0;
   }
   .github-container {
-    position: relative;
+    position: absolute;
+    display: inline-block;
+    right: 0;
+    top: 30px;
     .github-button {
       position: absolute;
       right: 0;
@@ -449,7 +467,6 @@ body {
   vertical-align: top;
   display: inline-block;
   .star {
-    width: 70px;
     text-shadow: 0px 0px 50px black;
     display: inline;
     vertical-align: middle;
@@ -480,6 +497,12 @@ body {
     justify-items: center;
     padding-right: 10px;
     padding-bottom: 10px;
+    .review-text {
+      text-shadow: 1px 1px 10px black;
+      color: white;
+      text-align: right;
+      margin: 5px 5px 0 0;
+    }
   }
 
   .phone-number {
@@ -487,7 +510,7 @@ body {
     bottom: 0;
     left: 0;
     padding-left: 10px;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
     font-size: 30px;
     text-shadow: 1px 1px 10px black;
     color: white;
