@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-  <img src="./assets/yelp-logo.png" class="yelp-logo" alt="Yelp Logo">
+    <a href="https://www.yelp.com/" rel="noopener noreferrer" target="_blank">
+      <img src="./assets/yelp-logo.png" class="yelp-logo" alt="Yelp Logo">
+    </a>
     <div class="github-container">
       <iframe class="github-button" src="https://ghbtns.com/github-btn.html?user=puremana&repo=food-roulette&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
     </div>
@@ -717,6 +719,15 @@ input:checked + .slider:before {
   }
   h1 {
     padding-top: 40px;
+  }
+}
+@media only screen and (max-width: 680px) {
+  .yelp-logo {
+    position: absolute;
+    left: 15%;
+  }
+  h1 {
+    padding-top: 70px !important;
   }
 }
 </style>
