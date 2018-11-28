@@ -38,7 +38,7 @@
       </div>
       
       <h3>Location Address <span class="required">*</span></h3>
-      <input type="text" v-model="location" :disabled="geolocation" placeholder="Get food around this address!">
+      <input type="text" id="search" v-model="location" :disabled="geolocation" placeholder="Get food around this address!">
       <div class="switch-container">
         <label class="switch">
           <input ref="geoInput" @click="geolocationCheck($event)" type="checkbox" v-model="geolocation">
@@ -91,6 +91,7 @@
 
 <script>
 import axios from 'axios';
+var places = require('places.js');
 
 export default {
   name: 'app',
@@ -171,7 +172,19 @@ export default {
     if (this.lat !== null) {
       this.geolocation = true;
     }
-    
+
+    const fixedOptions = {
+ appId: 'plG5I3EZLNQY',
+  apiKey: '4e7eaf7c20fb1520e32886afaf0d13b0',
+  container: document.querySelector('#search')
+};
+const reconfigurableOptions = {
+  language: 'de', // Receives results in German
+  countries: ['us', 'ru'], // Search in the United States of America and in the Russian Federation
+  type: 'city', // Search only for cities names
+  aroundLatLngViaIP: false // disable the extra search/boost around the source IP
+};
+const placesInstance = places(fixedOptions).configure(reconfigurableOptions);
   },
   methods: {
     refer() {
@@ -195,13 +208,8 @@ export default {
         ga('send', 'event', 'Delivery/Pickup', 'Value', this.delivery + "," + this.pickup);
       }
       
-      if ((this.lat !== null) && (this.lng !== null)) {
-        this.loading = true;
-        this.getLocaleBusinesses();
-      }
-      else {
-        this.error = "Please enable geolocation to use the roulette";
-      }
+      this.loading = true;
+      this.getLocaleBusinesses();
     },
     geolocationCheck(event) {
       if (event) event.preventDefault()
@@ -385,6 +393,20 @@ body {
   }
 }
 
+.ap-icon-pin {
+  display: none;
+}
+
+.ap-icon-clear {
+  right: 20px;
+  margin-right: 20px;
+  margin-bottom: 4px;
+}
+
+.ap-input, .ap-dropdown-menu {
+  font-family: 'Noto Sans', sans-serif !important;
+}
+
 .error {
   box-shadow: 0px 0px 20px black;
   border: 2px solid red;
@@ -427,12 +449,13 @@ body {
     padding: 10px;
     margin-bottom: 5px;
     font-family: 'Noto Sans', sans-serif;
+    border: 1px solid #CCC;
   }
   select {
     width: 90%;
   }
   input {
-    width: calc(90% - 20px);
+    width: calc(95% - 20px);
   }
   .checkbox-input {
     width: 40px;

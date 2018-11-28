@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "places.js": "^1.14.0",
     "vue": "^2.5.17"
   },
   "devDependencies": {
