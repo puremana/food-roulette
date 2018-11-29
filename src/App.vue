@@ -38,7 +38,7 @@
       </div>
       
       <h3>Location Address <span class="required">*</span></h3>
-      <input type="text" id="search" v-model="location" :disabled="geolocation" placeholder="Get food around this address!">
+      <input type="text" id="search" ref="search" :disabled="geolocation" placeholder="Get food around this address!" @input="inputSearchInput" @change="changeSearchInput">
       <div class="switch-container">
         <label class="switch">
           <input ref="geoInput" @click="geolocationCheck($event)" type="checkbox" v-model="geolocation">
@@ -99,6 +99,8 @@ export default {
     return {
       lat: null,
       lng: null,
+      slat: null,
+      slng: null,
       error: "",
       loading: false,
       name: "",
@@ -106,7 +108,6 @@ export default {
       rating: -1,
       price: 0,
       radius: 2500,
-      location: "",
       geolocation: false,
       noImage: false,
       x: null,
@@ -114,12 +115,24 @@ export default {
       delivery: false,
       pickup: false,
       phonenumber: null,
-      reviews: 0
+      reviews: 0,
+      searchInput: "",
+      ssearchInput: null,
+      searchValids: false,
+      searchValue: ""
     }
   },
   computed: {
+    searchValid() {
+      
+      console.log(this.searchValue);
+      if (this.searchInput === this.ssearchInput) {
+        return true;
+      }
+      return false;
+    },
     valid() {
-      if (this.location !== "" || (this.lat !== null && this.geolocation)) {
+      if (this.searchValid || (this.lat !== null && this.geolocation)) {
          return true;
       }
       return false;
@@ -143,20 +156,21 @@ export default {
       }
     },
     rlat() {
-      if (this.geo) {
+      console.log(this.geolocation, this.lat, this.slat);
+      if (this.geolocation) {
         if (this.lat) {
           return this.lat;
         }
       }
-      return this.x;
+      return this.slat;
     },
     rlng() {
-      if (this.geo) {
+      if (this.geolocation) {
         if (this.lng) {
           return this.lng;
         }
       }
-      return this.y;
+      return this.slng;
     },
     ratingPicture() {
       if (this.rating === -1) {
@@ -174,19 +188,41 @@ export default {
     }
 
     const fixedOptions = {
- appId: 'plG5I3EZLNQY',
-  apiKey: '4e7eaf7c20fb1520e32886afaf0d13b0',
-  container: document.querySelector('#search')
-};
-const reconfigurableOptions = {
-  language: 'de', // Receives results in German
-  countries: ['us', 'ru'], // Search in the United States of America and in the Russian Federation
-  type: 'city', // Search only for cities names
-  aroundLatLngViaIP: false // disable the extra search/boost around the source IP
-};
-const placesInstance = places(fixedOptions).configure(reconfigurableOptions);
+      appId: 'plG5I3EZLNQY',
+      apiKey: '4e7eaf7c20fb1520e32886afaf0d13b0',
+      container: document.querySelector('#search')
+    };
+
+    const placesInstance = places(fixedOptions);
+
+    var $address = document.querySelector('#search')
+    let self = this;
+    placesInstance.on('change', function(e) {
+      this.searchInput = true;
+      this.searchValids = true;
+      self.slat = e.suggestion.latlng.lat;
+      self.slng = e.suggestion.latlng.lng;
+      self.ssearchInput = e.suggestion.query;
+      console.log(e.suggestion);
+    });
+
+    var clearbutton = document.getElementsByClassName("ap-icon-clear");
+    clearbutton[0].onclick = function() {
+     self.searchInput = "";
+    }
+
   },
   methods: {
+    changeSearchInput() {
+      console.log("changedasd");
+      this.searchValue = this.$refs.search.value;
+      // if (this.searchValue === "") {
+      //   this.searchInput = "";
+      // }
+    },
+    inputSearchInput() {
+      this.searchInput = this.$refs.search.value;
+    },
     refer() {
       if (typeof ga === 'function') {
         ga('send', 'event', 'Yelp Image', 'Click', true);
@@ -196,13 +232,14 @@ const placesInstance = places(fixedOptions).configure(reconfigurableOptions);
       }
     },
     roulette() {
+      console.log(this.slat);
       if (this.loading || !this.valid) {
         return;
       }
 
       if (typeof ga === 'function') {
         ga('send', 'event', 'Roulette Button', 'Submit', true);
-        ga('send', 'event', 'Geo', 'Value', this.geo);
+        ga('send', 'event', 'Geo', 'Value', this.geolocation);
         ga('send', 'event', 'Price', 'Value', this.price);
         ga('send', 'event', 'Radius', 'Value', this.radius);
         ga('send', 'event', 'Delivery/Pickup', 'Value', this.delivery + "," + this.pickup);
@@ -254,23 +291,21 @@ const placesInstance = places(fixedOptions).configure(reconfigurableOptions);
 
       let marker = L.marker([this.x, this.y]).addTo(mymap);
 
-      if (this.geolocation) {
-        let circle = L.circle([this.lat, this.lng], {
-            color: '#00d667',
-            fillColor: '#00d667',
-            fillOpacity: 0.1,
-            radius: this.radius
-        }).addTo(mymap);
+      let circle = L.circle([this.rlat, this.rlng], {
+          color: '#00d667',
+          fillColor: '#00d667',
+          fillOpacity: 0.1,
+          radius: this.radius
+      }).addTo(mymap);
 
-          let popup = L.popup()
-        .setLatLng([this.lat, this.lng])
-        .setContent("You are here!")
-        .openOn(mymap);
-      }
+        let popup = L.popup()
+      .setLatLng([this.rlat, this.rlng])
+      .setContent("You are here!")
+      .openOn(mymap);
     },
     getLocaleBusinesses() {
       let self = this;
-      axios.get('https://us-central1-food-roulette-3dd83.cloudfunctions.net/yelpBusinessSearch?lat=' + this.lat + '&lng=' + this.lng + '&radius=' + this.radius + '&price=' + this.price + '&location=' + this.location + '&geo=' + this.geolocation)
+      axios.get('https://us-central1-food-roulette-3dd83.cloudfunctions.net/yelpBusinessSearch?lat=' + this.rlat + '&lng=' + this.rlng + '&radius=' + this.radius + '&price=' + this.price)
       .then(function (response) {
         // handle success
         self.error = "";
