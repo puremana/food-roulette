@@ -38,7 +38,7 @@
       </div>
       
       <h3>Location Address <span class="required">*</span></h3>
-      <input type="text" id="search" ref="search" :disabled="geolocation" placeholder="Get food around this address!" @input="inputSearchInput" @change="changeSearchInput">
+      <input type="text" id="search" ref="search" :disabled="geolocation" placeholder="Get food around this address!" @input="inputSearchInput">
       <div class="switch-container">
         <label class="switch">
           <input ref="geoInput" @click="geolocationCheck($event)" type="checkbox" v-model="geolocation">
@@ -47,7 +47,6 @@
         <span>Geolocation</span>
       </div>
       
-
       <div class="button" @click="roulette()" :class="{'button-active': valid}">
         <div v-if="loading" class="loader">Loading...</div>
         <span v-else>
@@ -66,8 +65,8 @@
           No Image Found
         </div>
 
-        <div v-if="phonenumber" class="phone-number">
-          {{phonenumber}}
+        <div v-if="phoneNumber" class="phone-number">
+          {{phoneNumber}}
         </div>
 
         <div v-if="rating !== -1" class="rating-box">
@@ -91,7 +90,7 @@
 
 <script>
 import axios from 'axios';
-var places = require('places.js');
+import places from 'places.js';
 
 export default {
   name: 'app',
@@ -110,22 +109,17 @@ export default {
       radius: 2500,
       geolocation: false,
       noImage: false,
-      x: null,
-      y: null,
       delivery: false,
       pickup: false,
-      phonenumber: null,
+      phoneNumber: null,
       reviews: 0,
       searchInput: "",
       ssearchInput: null,
-      searchValids: false,
       searchValue: ""
     }
   },
   computed: {
     searchValid() {
-      
-      console.log(this.searchValue);
       if (this.searchInput === this.ssearchInput) {
         return true;
       }
@@ -156,7 +150,6 @@ export default {
       }
     },
     rlat() {
-      console.log(this.geolocation, this.lat, this.slat);
       if (this.geolocation) {
         if (this.lat) {
           return this.lat;
@@ -195,30 +188,47 @@ export default {
 
     const placesInstance = places(fixedOptions);
 
-    var $address = document.querySelector('#search')
     let self = this;
     placesInstance.on('change', function(e) {
       this.searchInput = true;
-      this.searchValids = true;
       self.slat = e.suggestion.latlng.lat;
       self.slng = e.suggestion.latlng.lng;
       self.ssearchInput = e.suggestion.query;
-      console.log(e.suggestion);
     });
 
-    var clearbutton = document.getElementsByClassName("ap-icon-clear");
+    let clearbutton = document.getElementsByClassName("ap-icon-clear");
     clearbutton[0].onclick = function() {
      self.searchInput = "";
     }
 
   },
   methods: {
-    changeSearchInput() {
-      console.log("changedasd");
-      this.searchValue = this.$refs.search.value;
-      // if (this.searchValue === "") {
-      //   this.searchInput = "";
-      // }
+    // Get geolocation when page is created
+    getGeoLocation() {
+      let self = this;
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+        function showPosition(position) {
+          self.lat = position.coords.latitude;
+          self.lng = position.coords.longitude;
+          self.geolocation = true;
+        }
+      }
+    },
+    
+    // Methods relating to interactions on the picker aside from Food Roulette
+    geolocationCheck(event) {
+      if (event) event.preventDefault()
+      if (this.geolocation === true) {
+        this.geolocation = false;
+        return;
+      }
+      if (this.lat !== null) {
+        this.geolocation = true;
+      }
+      else {
+        this.getGeoLocation();
+      }
     },
     inputSearchInput() {
       this.searchInput = this.$refs.search.value;
@@ -231,8 +241,9 @@ export default {
         window.open(this.link);
       }
     },
+
+    // Food Roulette Logic
     roulette() {
-      console.log(this.slat);
       if (this.loading || !this.valid) {
         return;
       }
@@ -247,61 +258,6 @@ export default {
       
       this.loading = true;
       this.getLocaleBusinesses();
-    },
-    geolocationCheck(event) {
-      if (event) event.preventDefault()
-      if (this.geolocation === true) {
-        this.geolocation = false;
-        return;
-      }
-      if (this.lat !== null) {
-        this.geolocation = true;
-      }
-      else {
-        this.getGeoLocation();
-      }
-    },
-    getGeoLocation() {
-      let self = this;
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-        function showPosition(position) {
-          self.lat = position.coords.latitude;
-          self.lng = position.coords.longitude;
-          self.geolocation = true;
-        }
-      }
-    },
-    createMapsLocation() {
-      if (document.getElementById("mapid")) {
-        let element = document.getElementById("mapid");
-        element.parentNode.removeChild(element);
-      }
-      let m = document.createElement("div");
-      m.setAttribute("id", "mapid");
-      this.$refs.map.appendChild(m);
-
-      let mymap = L.map('mapid').setView([this.rlat, this.rlng], this.zoom);
-      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoicHVyZW1hbmEiLCJhIjoiY2pvd2N1eWw5MDlpYjNwbXRocjN3bTJmayJ9.Wi_6gEx-kcS2uq1_OU_Jew', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 30,
-        id: 'mapbox.streets',
-        accessToken: 'pk.eyJ1IjoicHVyZW1hbmEiLCJhIjoiY2pvd2N1eWw5MDlpYjNwbXRocjN3bTJmayJ9.Wi_6gEx-kcS2uq1_OU_Jew'
-      }).addTo(mymap);
-
-      let marker = L.marker([this.x, this.y]).addTo(mymap);
-
-      let circle = L.circle([this.rlat, this.rlng], {
-          color: '#00d667',
-          fillColor: '#00d667',
-          fillOpacity: 0.1,
-          radius: this.radius
-      }).addTo(mymap);
-
-        let popup = L.popup()
-      .setLatLng([this.rlat, this.rlng])
-      .setContent("You are here!")
-      .openOn(mymap);
     },
     getLocaleBusinesses() {
       let self = this;
@@ -326,8 +282,6 @@ export default {
         self.loading = false;
       })
       .catch(function (error) {
-        // handle error
-        // self.error = "error";
         self.error = "Error: " + error;
       });
     },
@@ -362,13 +316,42 @@ export default {
       if (b["image_url"] === "") {
         this.noImage = true;
       }
-      this.phonenumber = b["display_phone"];
+      this.phoneNumber = b["display_phone"];
       this.$refs.mystery.style.backgroundImage = "url('" + b["image_url"] + "')";
-
       this.distance = Math.round(b["distance"]);
-      this.x = b["coordinates"]["latitude"];
-      this.y = b["coordinates"]["longitude"];
-      this.createMapsLocation();
+
+      this.createMapsLocation(b["coordinates"]["latitude"], b["coordinates"]["longitude"]);
+    },
+    createMapsLocation(x, y) {
+      if (document.getElementById("mapid")) {
+        let element = document.getElementById("mapid");
+        element.parentNode.removeChild(element);
+      }
+      let m = document.createElement("div");
+      m.setAttribute("id", "mapid");
+      this.$refs.map.appendChild(m);
+
+      let mymap = L.map('mapid').setView([this.rlat, this.rlng], this.zoom);
+      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoicHVyZW1hbmEiLCJhIjoiY2pvd2N1eWw5MDlpYjNwbXRocjN3bTJmayJ9.Wi_6gEx-kcS2uq1_OU_Jew', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 30,
+        id: 'mapbox.streets',
+        accessToken: 'pk.eyJ1IjoicHVyZW1hbmEiLCJhIjoiY2pvd2N1eWw5MDlpYjNwbXRocjN3bTJmayJ9.Wi_6gEx-kcS2uq1_OU_Jew'
+      }).addTo(mymap);
+
+      let marker = L.marker([x, y]).addTo(mymap);
+
+      let circle = L.circle([this.rlat, this.rlng], {
+          color: '#00d667',
+          fillColor: '#00d667',
+          fillOpacity: 0.1,
+          radius: this.radius
+      }).addTo(mymap);
+
+        let popup = L.popup()
+      .setLatLng([this.rlat, this.rlng])
+      .setContent("You are here!")
+      .openOn(mymap);
     }
   }
 }
@@ -588,9 +571,8 @@ body {
 
   .mystery-box {
     box-shadow: 0px 0px 20px black;
-      max-height: 475px;
-      height: 90vw;
-    // width: 400px;
+    max-height: 475px;
+    height: 90vw;
     width: 90vw;
     max-width: 475px;
     min-width: 300px;
@@ -762,7 +744,6 @@ input:checked + .slider:before {
   transform: translateX(14px);
 }
 
-/* Rounded sliders */
 .slider.round {
   border-radius: 20px;
 }
@@ -772,9 +753,6 @@ input:checked + .slider:before {
 }
 
 @media only screen and (max-width: 680px) {
-  .github-button {
-    // position: relative !important;
-  }
   h1 {
     padding-top: 40px;
   }
