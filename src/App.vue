@@ -10,13 +10,13 @@
     <div class="left-container">
       <h2>Options</h2>
       <h3>Price</h3>
-      <select v-model="price">
+      <!--<select v-model="price">
         <option value="0">No Price Filter</option>
         <option value="1">$</option>
         <option value="2">$$</option>
         <option value="3">$$$</option>
         <option value="4">$$$$</option>
-      </select>
+      </select>-->
 
       <h3>Radius</h3>
       <select v-model="radius">
@@ -27,7 +27,7 @@
         <option value="25000">25km</option>
       </select>
 
-      <h3>Delivery Options</h3>
+      <!--<h3>Delivery Options</h3>
       <div class="checkbox-container">
         <div class="checkbox">
           <input class="checkbox-input" type="checkbox" v-model="delivery">Delivery
@@ -35,7 +35,7 @@
         <div class="checkbox">
           <input class="checkbox-input" type="checkbox" v-model="pickup">Pickup
         </div>
-      </div>
+      </div>-->
       
       <h3>Location Address <span class="required">*</span></h3>
       <input type="text" id="search" ref="search" :disabled="geolocation" placeholder="Get food around this address!" @input="inputSearchInput">
@@ -457,7 +457,7 @@ body {
   margin: 0 1% 0 1%;
   margin-bottom: 20px;
   text-align: center;
-  min-height: 475px;
+  min-height: 360px;
   position: relative;
 
   h2 {
