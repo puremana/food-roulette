@@ -766,4 +766,28 @@ input:checked + .slider:before {
     padding-top: 70px !important;
   }
 }
+@media only screen and (max-width: 495px) {
+  .container .phone-number {
+    font-size: 26px;
+  }
+}
+@media only screen and (max-width: 450px) {
+  .container .phone-number {
+    font-size: 22px;
+  }
+  .container .mystery-box .name {
+    font-size: 30px;
+  }
+}
+@media only screen and (max-width: 405px) {
+  h1 {
+    font-size: 1.5em;
+  }
+  .container .phone-number {
+    font-size: 18px;
+  }
+  .container .mystery-box .name {
+    font-size: 26px;
+  }
+}
 </style>
