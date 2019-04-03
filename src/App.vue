@@ -7,16 +7,16 @@
       <iframe class="github-button" src="https://ghbtns.com/github-btn.html?user=puremana&repo=food-roulette&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
     </div>
     <h1>Random Food Picker!</h1>
-    <div class="left-container">
+    <div class="left-container" v-bind:class="{ 'left-contaner-filters': filters }">
       <h2>Options</h2>
-      <h3>Price</h3>
-      <!--<select v-model="price">
+      <h3 v-if="filters">Price</h3>
+      <select v-if="filters" v-model="price">
         <option value="0">No Price Filter</option>
         <option value="1">$</option>
         <option value="2">$$</option>
         <option value="3">$$$</option>
         <option value="4">$$$$</option>
-      </select>-->
+      </select>
 
       <h3>Radius</h3>
       <select v-model="radius">
@@ -27,15 +27,15 @@
         <option value="25000">25km</option>
       </select>
 
-      <!--<h3>Delivery Options</h3>
-      <div class="checkbox-container">
+      <h3 v-if="filters">Delivery Options</h3>
+      <div v-if="filters" class="checkbox-container">
         <div class="checkbox">
           <input class="checkbox-input" type="checkbox" v-model="delivery">Delivery
         </div>
         <div class="checkbox">
           <input class="checkbox-input" type="checkbox" v-model="pickup">Pickup
         </div>
-      </div>-->
+      </div>
       
       <h3>Location Address <span class="required">*</span></h3>
       <input type="text" id="search" ref="search" :disabled="geolocation" placeholder="Get food around this address!" @input="inputSearchInput">
@@ -96,6 +96,7 @@ export default {
   name: 'app',
   data: function () {
     return {
+      filters: false,
       lat: null,
       lng: null,
       slat: null,
@@ -512,6 +513,9 @@ body {
     cursor: pointer;
     background-color: #2196F3;
   }
+}
+.left-contaner-filters {
+  min-height: 480px;
 }
 
 .container {
