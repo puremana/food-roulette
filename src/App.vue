@@ -7,10 +7,10 @@
       <iframe class="github-button" src="https://ghbtns.com/github-btn.html?user=puremana&repo=food-roulette&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
     </div>
     <h1>Random Food Picker!</h1>
-    <div class="left-container">
+    <div class="left-container" v-bind:class="{ 'left-contaner-filters': filters }">
       <h2>Options</h2>
-      <h3>Price</h3>
-      <select v-model="price">
+      <h3 v-if="filters">Price</h3>
+      <select v-if="filters" v-model="price">
         <option value="0">No Price Filter</option>
         <option value="1">$</option>
         <option value="2">$$</option>
@@ -27,8 +27,8 @@
         <option value="25000">25km</option>
       </select>
 
-      <h3>Delivery Options</h3>
-      <div class="checkbox-container">
+      <h3 v-if="filters">Delivery Options</h3>
+      <div v-if="filters" class="checkbox-container">
         <div class="checkbox">
           <input class="checkbox-input" type="checkbox" v-model="delivery">Delivery
         </div>
@@ -96,6 +96,7 @@ export default {
   name: 'app',
   data: function () {
     return {
+      filters: false,
       lat: null,
       lng: null,
       slat: null,
@@ -457,7 +458,7 @@ body {
   margin: 0 1% 0 1%;
   margin-bottom: 20px;
   text-align: center;
-  min-height: 475px;
+  min-height: 360px;
   position: relative;
 
   h2 {
@@ -512,6 +513,9 @@ body {
     cursor: pointer;
     background-color: #2196F3;
   }
+}
+.left-contaner-filters {
+  min-height: 480px;
 }
 
 .container {
