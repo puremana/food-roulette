@@ -41,12 +41,12 @@
       <input type="text" id="search" ref="search" :disabled="geolocation" placeholder="Get food around this address!" @input="inputSearchInput">
       <div class="switch-container">
         <label class="switch">
-          <input ref="geoInput" @click="geolocationCheck($event)" type="checkbox" v-model="geolocation">
+          <input ref="geoInput" @click="geolocationCheck()" type="checkbox" v-bind:checked="geolocation">
           <span class="slider round"></span>
         </label>
         <span>Geolocation</span>
       </div>
-      
+
       <div class="button" @click="roulette()" :class="{'button-active': valid}">
         <div v-if="loading" class="loader">Loading...</div>
         <span v-else>
