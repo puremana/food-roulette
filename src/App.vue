@@ -10,7 +10,7 @@
     <div class="left-container" v-bind:class="{ 'left-contaner-filters': filters }">
       <h2>Options</h2>
       <h3 v-if="filters">Price</h3>
-      <select v-if="filters" v-model="price">
+      <select v-if="filters" v-model="price" @change="inputChanged">
         <option value="0">No Price Filter</option>
         <option value="1">$</option>
         <option value="2">$$</option>
@@ -19,7 +19,7 @@
       </select>
 
       <h3>Radius</h3>
-      <select v-model="radius">
+      <select v-model="radius" @change="inputChanged">
         <option value="1000">1km</option>
         <option value="2500">2.5km</option>
         <option value="5000">5km</option>
@@ -30,18 +30,18 @@
       <h3 v-if="filters">Delivery Options</h3>
       <div v-if="filters" class="checkbox-container">
         <div class="checkbox">
-          <input class="checkbox-input" type="checkbox" v-model="delivery">Delivery
+          <input class="checkbox-input" type="checkbox" v-model="delivery" @change="inputChanged">Delivery
         </div>
         <div class="checkbox">
-          <input class="checkbox-input" type="checkbox" v-model="pickup">Pickup
+          <input class="checkbox-input" type="checkbox" v-model="pickup" @change="inputChanged">Pickup
         </div>
       </div>
       
       <h3>Location Address <span class="required">*</span></h3>
-      <input type="text" id="search" ref="search" :disabled="geolocation" placeholder="Get food around this address!" @input="inputSearchInput">
+      <input type="text" id="search" ref="search" :disabled="geolocation" placeholder="Get food around this address!" @input="inputSearchInput" @change="inputChanged">
       <div class="switch-container">
         <label class="switch">
-          <input ref="geoInput" @click="geolocationCheck()" type="checkbox" v-bind:checked="geolocation">
+          <input ref="geoInput" @click="geolocationCheck()" type="checkbox" v-bind:checked="geolocation" @change="inputChanged">
           <span class="slider round"></span>
         </label>
         <span>Geolocation</span>
@@ -116,7 +116,10 @@ export default {
       reviews: 0,
       searchInput: "",
       ssearchInput: null,
-      searchValue: ""
+      searchValue: "",
+      changed: false,
+      searches: 0,
+      filteredBusinesses: []
     }
   },
   computed: {
@@ -204,6 +207,9 @@ export default {
 
   },
   methods: {
+    inputChanged() {
+      this.changed = true;
+    },
     // Get geolocation when page is created
     getGeoLocation() {
       let self = this;
@@ -249,6 +255,11 @@ export default {
         return;
       }
 
+      if (!this.changed && this.searches > 0 && this.filteredBusinesses.length > 0) {
+        this.filterBusinesses(this.filteredBusinesses);
+        return;
+      }
+
       if (typeof ga === 'function') {
         ga('send', 'event', 'Roulette Button', 'Submit', true);
         ga('send', 'event', 'Geo', 'Value', this.geolocation);
@@ -265,6 +276,9 @@ export default {
       axios.get('https://us-central1-food-roulette-3dd83.cloudfunctions.net/yelpBusinessSearch?lat=' + this.rlat + '&lng=' + this.rlng + '&radius=' + this.radius + '&price=' + this.price)
       .then(function (response) {
         // handle success
+        // Reset input changed variable for caching
+        self.changed = false;
+        self.searches++;
         self.error = "";
         if (response.data.length === 0) {
           self.error = "No open businesses were found matching your options, try increasing your radius!";
@@ -273,6 +287,7 @@ export default {
         }
         else {
           let realData = self.filterData(response.data);
+          self.filteredBusinesses = realData;
           if (realData.length === 0) {
             self.error = "No open businesses were found matching your options, try increasing your radius!";
           }
@@ -309,6 +324,7 @@ export default {
     filterBusinesses(data) {
       let ran = Math.floor(Math.random() * Math.floor(data.length - 1));
       let b = data[ran];
+      console.log(JSON.stringify(b));
       this.name = b["name"];
       this.link = b["url"];
       this.rating = b["rating"].toFixed(1);
