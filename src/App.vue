@@ -324,7 +324,6 @@ export default {
     filterBusinesses(data) {
       let ran = Math.floor(Math.random() * Math.floor(data.length - 1));
       let b = data[ran];
-      console.log(JSON.stringify(b));
       this.name = b["name"];
       this.link = b["url"];
       this.rating = b["rating"].toFixed(1);
