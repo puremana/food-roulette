@@ -7,26 +7,26 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "acorn": ">=5.7.4",
+    "acorn": "^7.2.0",
     "axios": "^0.19.2",
     "fstream": ">=1.0.12",
     "lodash": ">=4.17.12",
     "lodash.merge": ">=4.6.2",
     "minimist": ">=1.2.2",
     "mixin-deep": "^2.0.1",
-    "places.js": "^1.18.1",
+    "places.js": "^1.19.0",
     "querystringify": "^2.1.1",
-    "serialize-javascript": ">=2.1.1",
-    "set-value": "^3.0.1",
-    "tar": "^6.0.1",
+    "serialize-javascript": "^4.0.0",
+    "set-value": "^3.0.2",
+    "tar": "^6.0.2",
     "vue": "^2.6.11"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.12.1",
-    "@vue/cli-service": "^4.2.3",
-    "node-sass": "^4.13.1",
+    "@vue/cli-plugin-babel": "^4.4.1",
+    "@vue/cli-service": "^4.4.1",
+    "node-sass": "^4.14.1",
     "sass-loader": "^7.3.1",
     "vue-template-compiler": "^2.6.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.11.0"
   }
 }
