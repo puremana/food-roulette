@@ -322,8 +322,16 @@ export default {
       return newData;
     },
     filterBusinesses(data) {
-      let ran = Math.floor(Math.random() * Math.floor(data.length - 1));
-      let b = data[ran];
+      let newResult = false;
+      let ran, b;
+      while (!newResult) {
+        ran = Math.floor(Math.random() * Math.floor(data.length - 1));
+        b = data[ran];
+        if (b["name"] !== this.name || data.length === 1) {
+          newResult = true;
+        }
+      }
+      
       this.name = b["name"];
       this.link = b["url"];
       this.rating = b["rating"].toFixed(1);
