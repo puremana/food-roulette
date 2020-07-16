@@ -10,7 +10,7 @@
     "acorn": "^7.2.0",
     "axios": "^0.19.2",
     "fstream": ">=1.0.12",
-    "lodash": ">=4.17.12",
+    "lodash": ">=4.17.19",
     "lodash.merge": ">=4.6.2",
     "minimist": ">=1.2.2",
     "mixin-deep": "^2.0.1",
