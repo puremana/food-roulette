@@ -356,10 +356,12 @@ export default {
       this.$refs.map.appendChild(m);
 
       let mymap = L.map('mapid').setView([this.rlat, this.rlng], this.zoom);
-      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoicHVyZW1hbmEiLCJhIjoiY2pvd2N1eWw5MDlpYjNwbXRocjN3bTJmayJ9.Wi_6gEx-kcS2uq1_OU_Jew', {
+      L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoicHVyZW1hbmEiLCJhIjoiY2pvd2N1eWw5MDlpYjNwbXRocjN3bTJmayJ9.Wi_6gEx-kcS2uq1_OU_Jew', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 30,
-        id: 'mapbox.streets',
+        tileSize: 512,
+        zoomOffset: -1,
+        id: 'mapbox/streets-v11',
         accessToken: 'pk.eyJ1IjoicHVyZW1hbmEiLCJhIjoiY2pvd2N1eWw5MDlpYjNwbXRocjN3bTJmayJ9.Wi_6gEx-kcS2uq1_OU_Jew'
       }).addTo(mymap);
 
