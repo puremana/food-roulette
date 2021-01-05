@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "acorn": "^7.4.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "fstream": ">=1.0.12",
     "lodash": "^4.17.20",
     "lodash.merge": ">=4.6.2",
