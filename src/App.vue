@@ -119,6 +119,7 @@ export default {
       searchValue: "",
       changed: false,
       searches: 0,
+      rawfilteredBusinesses: [],
       filteredBusinesses: []
     }
   },
@@ -255,7 +256,10 @@ export default {
         return;
       }
 
-      if (!this.changed && this.searches > 0 && this.filteredBusinesses.length > 0) {
+      if (!this.changed && this.searches > 0 && this.rawfilteredBusinesses.length > 0) {
+        if (this.filteredBusinesses.length === 0) {
+          this.filteredBusinesses = this.rawfilteredBusinesses.slice();
+        }
         this.filterBusinesses(this.filteredBusinesses);
         return;
       }
@@ -287,7 +291,8 @@ export default {
         }
         else {
           let realData = self.filterData(response.data);
-          self.filteredBusinesses = realData;
+          self.rawfilteredBusinesses = realData;
+          self.filteredBusinesses = [];
           if (realData.length === 0) {
             self.error = "No open businesses were found matching your options, try increasing your radius!";
           }
@@ -332,6 +337,8 @@ export default {
         }
       }
       
+      data.splice(ran, 1);
+
       this.name = b["name"];
       this.link = b["url"];
       this.rating = b["rating"].toFixed(1);
@@ -464,6 +471,7 @@ body {
   text-align: center;
   min-height: 360px;
   position: relative;
+  user-select: none;
 
   h2 {
     margin: 20px 0 0 0;
