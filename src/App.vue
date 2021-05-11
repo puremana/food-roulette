@@ -384,10 +384,10 @@ export default {
 </script>
 
 <style lang="scss">
-@import url('https://fonts.googleapis.com/css?family=Noto+Sans:400,700');
+@import url('https://fonts.googleapis.com/css2?family=Merienda:wght@400;700&display=swap');
 
 body {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'Merienda', cursive;
   text-align: center;
 
   background: url('/background.jpg');
