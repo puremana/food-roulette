@@ -81,7 +81,7 @@
     </div>
 
     <div ref="map" class="map-container"></div>
-    <div v-if="name" style="color: white;">
+    <div v-if="name" style="color: rgb(34, 34, 34);">
       Distance From You: {{distance}}m
     </div>
 
@@ -390,28 +390,7 @@ body {
   font-family: 'Noto Sans', sans-serif;
   text-align: center;
 
-  background: linear-gradient(128deg, #00b3ff, #006fff);
-  background-size: 400% 400%;
-
-  -webkit-animation: backgroundAnimation 10s ease infinite;
-  -moz-animation: backgroundAnimation 10s ease infinite;
-  animation: backgroundAnimation 10s ease infinite;
-
-  @-webkit-keyframes backgroundAnimation {
-      0%{background-position:0% 4%}
-      50%{background-position:100% 50%}
-      100%{background-position:0% 4%}
-  }
-  @-moz-keyframes backgroundAnimation {
-      0%{background-position:0% 4%}
-      50%{background-position:100% 50%}
-      100%{background-position:0% 4%}
-  }
-  @keyframes backgroundAnimation { 
-      0%{background-position:0% 4%}
-      50%{background-position:100% 50%}
-      100%{background-position:0% 4%}
-  }
+  background: url('/background.jpg');
 
   .yelp-logo {
     width: 100px;
@@ -419,7 +398,7 @@ body {
   }
 
   h1 {
-    color: white;
+    color: rgb(34, 34, 34);
     margin-bottom: 30px;
     padding-top: 0;
     margin-top: 0;
