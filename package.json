@@ -8,9 +8,9 @@
   },
   "dependencies": {
     "acorn": "^7.4.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "fstream": ">=1.0.12",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "lodash.merge": ">=4.6.2",
     "minimist": ">=1.2.2",
     "mixin-deep": "^2.0.1",
@@ -18,15 +18,15 @@
     "querystringify": "^2.2.0",
     "serialize-javascript": "^4.0.0",
     "set-value": "^3.0.2",
-    "tar": "^6.0.5",
+    "tar": "^6.1.0",
     "vue": "^2.6.12"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.9",
-    "@vue/cli-service": "^4.5.9",
+    "@vue/cli-plugin-babel": "^4.5.13",
+    "@vue/cli-service": "^4.5.13",
     "node-sass": "^4.14.1",
     "sass-loader": "^7.3.1",
     "vue-template-compiler": "^2.6.12",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^3.11.2"
   }
 }
