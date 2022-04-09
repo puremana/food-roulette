@@ -12,7 +12,7 @@
     "fstream": ">=1.0.12",
     "lodash": "^4.17.21",
     "lodash.merge": ">=4.6.2",
-    "minimist": ">=1.2.2",
+    "minimist": ">=1.2.6",
     "mixin-deep": "^2.0.1",
     "places.js": "^1.19.0",
     "querystringify": "^2.2.0",
