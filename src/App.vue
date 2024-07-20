@@ -174,7 +174,10 @@ export default {
       if (this.rating === -1) {
         return null;
       }
-      return require("./assets/ratings/" + this.rating.replace(".", "-") + ".png");
+      // Round to nearest 0.5
+      let roundedRating = Math.round(this.rating / 0.5) * 0.5;
+      roundedRating = roundedRating.toFixed(1);
+      return require("./assets/ratings/" + roundedRating.toString().replace(".", "-") + ".png");
     }
   },
   created() {

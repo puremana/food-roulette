@@ -7,6 +7,8 @@ Blog post on the process of creating the application [https://blog.jeremyshaw.co
 ![Random Food Picture Screenshot](random-food-picker.jpg)
 *Random Food Picker Screenshot*
 
+This project uses Node v14.
+
 ## Commands
 
 Project setup
