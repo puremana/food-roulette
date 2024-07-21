@@ -8,25 +8,25 @@
   },
   "dependencies": {
     "acorn": "^7.4.1",
-    "axios": "^0.21.1",
+    "axios": "^0.21.4",
     "fstream": ">=1.0.12",
     "lodash": "^4.17.21",
     "lodash.merge": ">=4.6.2",
-    "minimist": ">=1.2.2",
+    "minimist": "^1.2.8",
     "mixin-deep": "^2.0.1",
     "places.js": "^1.19.0",
     "querystringify": "^2.2.0",
     "serialize-javascript": "^4.0.0",
-    "set-value": "^3.0.2",
-    "tar": "^6.1.0",
-    "vue": "^2.6.12"
+    "set-value": "^3.0.3",
+    "tar": "^6.2.1",
+    "vue": "^2.7.16"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.13",
-    "@vue/cli-service": "^4.5.13",
+    "@vue/cli-plugin-babel": "^4.5.19",
+    "@vue/cli-service": "^4.5.19",
     "node-sass": "^4.14.1",
     "sass-loader": "^7.3.1",
-    "vue-template-compiler": "^2.6.12",
-    "webpack-dev-server": "^3.11.2"
+    "vue-template-compiler": "^2.7.16",
+    "webpack-dev-server": "^3.11.3"
   }
 }
