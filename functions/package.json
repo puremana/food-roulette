@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "axios": "^0.19.0",
-    "firebase-admin": "~6.0.0",
+    "firebase-admin": "~7.0.0",
     "firebase-functions": "^2.3.1",
     "yelp-fusion": "^3",
     "acorn": ">=5.7.4",
@@ -21,6 +21,6 @@
   },
   "private": true,
   "engines": {
-    "node": "8"
+    "node": "16"
   }
 }
