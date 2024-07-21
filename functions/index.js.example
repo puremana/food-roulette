@@ -1,14 +1,36 @@
 const functions = require('firebase-functions');
 const yelp = require('yelp-fusion');
- const client = yelp.client("API Key here!");
+ 
+const client = yelp.client("API Key here!");
 
 exports.yelpBusinessSearch = functions.https.onRequest((req, res) => {
-    client.search({
+    res.set('Access-Control-Allow-Origin', '*');
+
+    if (req.query.price == "0") {
+      client.search({
         latitude: req.query.lat,
-        longitude: req.query.lng
+        longitude: req.query.lng,
+        radius: req.query.radius,
+        limit: 50,
+        open_now: true
       }).then(response => {
         res.send(response.jsonBody.businesses);
       }).catch(e => {
         res.send(e);
       });
+    }
+    else {
+      client.search({
+        latitude: req.query.lat,
+        longitude: req.query.lng,
+        radius: req.query.radius,
+        price: req.query.price,
+        limit: 50,
+        open_now: true
+      }).then(response => {
+        res.send(response.jsonBody.businesses);
+      }).catch(e => {
+        res.send(e);
+      });
+    }
 });
