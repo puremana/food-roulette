@@ -38,7 +38,7 @@
       </div>
       
       <h3>Location Address <span class="required">*</span></h3>
-      <input type="text" id="search" ref="search" :disabled="geolocation" placeholder="Get food around this address!" @input="inputSearchInput" @change="inputChanged">
+      <div id="autocomplete" class="autocomplete-container"></div>
       <div class="switch-container">
         <label class="switch">
           <input ref="geoInput" @click="geolocationCheck()" type="checkbox" v-bind:checked="geolocation" @change="inputChanged">
@@ -90,7 +90,7 @@
 
 <script>
 import axios from 'axios';
-import places from 'places.js';
+import { GeocoderAutocomplete } from '@geoapify/geocoder-autocomplete';
 
 export default {
   name: 'app',
@@ -116,7 +116,6 @@ export default {
       reviews: 0,
       searchInput: "",
       ssearchInput: null,
-      searchValue: "",
       changed: false,
       searches: 0,
       rawfilteredBusinesses: [],
@@ -184,31 +183,30 @@ export default {
     this.getGeoLocation();
   },
   mounted() {
-    if (this.lat !== null) {
-      this.geolocation = true;
+    let self = this;
+
+    if (self.lat !== null) {
+      self.geolocation = true;
     }
 
-    const fixedOptions = {
-      appId: 'plG5I3EZLNQY',
-      apiKey: '4e7eaf7c20fb1520e32886afaf0d13b0',
-      container: document.querySelector('#search')
-    };
+    const autocomplete = new GeocoderAutocomplete(
+      document.querySelector('#autocomplete'), 
+      '8b58c8e691c5497c85dd49094d4b6e67', 
+      { /* Geocoder options */ }
+    );
 
-    const placesInstance = places(fixedOptions);
-
-    let self = this;
-    placesInstance.on('change', function(e) {
-      this.searchInput = true;
-      self.slat = e.suggestion.latlng.lat;
-      self.slng = e.suggestion.latlng.lng;
-      self.ssearchInput = e.suggestion.query;
+    autocomplete.on('select', (location) => {
+      self.slng = location.geometry.coordinates[0];
+      self.slat = location.geometry.coordinates[1];
+      self.changed = true;
+      self.searchInput = location.properties.formatted;
+      self.ssearchInput = location.properties.formatted;
     });
 
-    let clearbutton = document.getElementsByClassName("ap-icon-clear");
-    clearbutton[0].onclick = function() {
-     self.searchInput = "";
-    }
-
+    autocomplete.on('input', (userInput) => {
+      self.geolocation = false;
+      self.searchInput = userInput;
+    });
   },
   methods: {
     inputChanged() {
@@ -527,6 +525,45 @@ body {
   .button-active {
     cursor: pointer;
     background-color: #2196F3;
+  }
+  #autocomplete {
+    position: relative;
+    width: 95%;
+    margin: 0 auto;
+    .geoapify-close-button {
+      display: none;
+    }
+    .geoapify-autocomplete-items {
+      position: absolute;
+      width: 100%;
+      z-index: 2;
+      background: white;
+      border: 1px solid black;
+      .geoapify-autocomplete-item {
+        &:hover {
+          background: #e8e8e8;
+          cursor: pointer;
+        }
+        .icon {
+          display: none;
+        }
+        .address {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          align-items: center;
+          justify-content: center;
+          text-align: left;
+          grid-gap: 5px;
+          padding: 5px;
+          .main-part {
+            font-size: 14px;
+          }
+          .secondary-part {
+            font-size: 12px;
+          }
+        }
+      }
+    }
   }
 }
 .left-contaner-filters {
